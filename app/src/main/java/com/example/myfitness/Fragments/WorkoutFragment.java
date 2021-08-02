@@ -57,21 +57,26 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.TouchLis
     private void observe() {
         viewModel.getMyWorkoutList().observe(getViewLifecycleOwner(), workouts -> {
             workoutAdapter.setWorkoutList(workouts);
-            recyclerView.setAdapter(workoutAdapter);
             workoutList = workouts;
         });
-        viewModel.getUser().observe(getViewLifecycleOwner(), user -> userNameTextView.setText(user.getUsername()+"."));
+        viewModel.getUser().observe(getViewLifecycleOwner(), user -> {
+            if(user==null)return;
+            userNameTextView.setText(user.getUsername()+".");
+        });
+
     }
 
     private void setUpRecView(View view) {
         viewModel = ViewModelProviders.of(this).get(MenuViewModel.class);
-        viewModel.init();
+        viewModel.init(getActivity().getApplication());
         addWorkoutButton = view.findViewById(R.id.addWorkoutBotton);
         userNameTextView = view.findViewById(R.id.userNameWorkoutFrag);
         recyclerView = view.findViewById(R.id.myWorkoutsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         workoutAdapter = new WorkoutAdapter(getActivity(),this);
         recyclerView.setAdapter(workoutAdapter);
+        recyclerView.setAnimation(null);
+        recyclerView.setItemAnimator(null);
     }
 
     @Override
@@ -86,6 +91,6 @@ public class WorkoutFragment extends Fragment implements WorkoutAdapter.TouchLis
     public void deleteNode(int position) {
         Toast.makeText(getActivity(),"Workout removed.",Toast.LENGTH_SHORT).show();
         String id = workoutList.get(position).getId();
-        viewModel.deleteWorkout(id);
+        viewModel.deleteWorkout(id,getActivity().getApplication());
     }
 }

@@ -72,14 +72,13 @@ public class NutritionFragment extends Fragment implements DaysAdapter.TouchList
         });
         viewModel.getListOfDays().observe(getViewLifecycleOwner(),days->{
             adapter.setDietDayList(days);
-            recyclerView.setAdapter(adapter);
             dietDays = days;
         });
     }
 
     private void setUpStuff(View view) {
         viewModel = ViewModelProviders.of(this).get(MenuViewModel.class);
-        viewModel.init();
+        viewModel.init(getActivity().getApplication());
         addNewDayButton = view.findViewById(R.id.addNewDay);
         recyclerView = view.findViewById(R.id.myDaysRecView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -89,7 +88,7 @@ public class NutritionFragment extends Fragment implements DaysAdapter.TouchList
 
     private void setOnClicksMyView() {
         createDayButton.setOnClickListener(v->{
-            viewModel.addDay(proteinEditText.getText().toString(),carbsEditText.getText().toString(),fatsEditText.getText().toString());
+            viewModel.addDay(proteinEditText.getText().toString(),carbsEditText.getText().toString(),fatsEditText.getText().toString(),getActivity().getApplication());
         });
     }
 
@@ -119,10 +118,10 @@ public class NutritionFragment extends Fragment implements DaysAdapter.TouchList
 
     private void setOnClickUpdate() {
         updateButton.setOnClickListener(v->{
-            viewModel.updateDay(dietDay.getId(),uProteinEditText.getText().toString(),uCarbsEditText.getText().toString(),uFatsEditText.getText().toString());
+            viewModel.updateDay(dietDay.getId(),uProteinEditText.getText().toString(),uCarbsEditText.getText().toString(),uFatsEditText.getText().toString(),getActivity().getApplication());
         });
         deleteButton.setOnClickListener(v->{
-            viewModel.deleteDay(dietDay.getId());
+            viewModel.deleteDay(dietDay.getId(),getActivity().getApplication());
         });
     }
 

@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         });
         viewModel.getAcceptLogin().observe(this, aBoolean -> {
             if(aBoolean){
+                viewModel.fenchData(getApplication());
                 startActivity(new Intent(getApplicationContext(),MenuActivity.class));
                 finish();
             }

@@ -1,5 +1,6 @@
 package com.example.myfitness.ViewModel;
 
+import android.app.Application;
 import android.text.TextUtils;
 
 import androidx.lifecycle.LiveData;
@@ -35,16 +36,6 @@ public class MainViewModel extends ViewModel {
     }
     public LiveData<Boolean> getAcceptLogin() {
         return acceptLogin;
-    }
-
-
-
-
-
-    public void singUser(String userName, String email, String password, String weight, String height, String buttonText) {
-        if(buttonText.equals("Login")){
-            loginUser(email,password);
-        }else signUpUser(userName,email,password,weight,height);
     }
 
     private void signUpUser(String userName, String email, String password, String weight, String height) {
@@ -85,5 +76,15 @@ public class MainViewModel extends ViewModel {
                 acceptLogin.postValue(true);
             }else toastMessage.postValue("Login failed.");
         });
+    }
+
+    public void fenchData(Application application) {
+        repository.fetchData(application);
+    }
+
+    public void singUser(String userName, String email, String password, String weight, String height, String buttonText) {
+        if(buttonText.equals("Login")){
+            loginUser(email,password);
+        }else signUpUser(userName,email,password,weight,height);
     }
 }

@@ -78,6 +78,7 @@ public class MenuActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setItemIconTintList(null);
         viewModel = ViewModelProviders.of(this).get(MenuViewModel.class);
+        viewModel.init(getApplication());
         getWindow().setNavigationBarColor(getResources().getColor(R.color.myLightPurple));
         selectedFragment = new WorkoutFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.menuFragmentFrame,selectedFragment).commit();

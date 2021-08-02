@@ -1,9 +1,15 @@
 package com.example.myfitness.Repository;
 
+import android.app.Application;
+
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.myfitness.Model.Exercise;
+import com.example.myfitness.Model.ExerciseDao;
+import com.example.myfitness.Model.Workout;
+import com.example.myfitness.Model.WorkoutDao;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -16,59 +22,46 @@ import java.util.List;
 
 public class ExercisesRepository {
     static ExercisesRepository repository;
+    private ExerciseDao exerciseDao;
+    private WorkoutDao workoutDao;
 
     public static ExercisesRepository getInstance(){
         if(repository==null)repository= new ExercisesRepository();
         return repository;
     }
 
-    private MutableLiveData<List<Exercise>> exerciseList = new MutableLiveData<>();
+    private LiveData<List<Exercise>> exerciseList = new MutableLiveData<>();
 
-    public MutableLiveData<List<Exercise>> getExerciseList(String id) {
-        setExerciseList(id);
+    public LiveData<List<Exercise>> getExerciseList(String id, Application application) {
+        exerciseDao = Db.getInstance(application).exerciseDao();
+        exerciseList = exerciseDao.getExerciseList(id);
         return exerciseList;
     }
 
-    public void deleteExercise(String id) {
+    public void deleteExercise(String id,Application application) {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Exercises").child(id);
         databaseReference.removeValue();
+        exerciseDao = Db.getInstance(application).exerciseDao();
+        new MenuRepository.DeleteExercise(exerciseDao).execute(id);
     }
 
-    public void deleteWorkout(String workoutId) {
+    public void deleteWorkout(String workoutId, Application application) {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Workouts").child(workoutId);
         databaseReference.removeValue();
+        workoutDao = Db.getInstance(application).workoutDao();
+        new MenuRepository.DeleteWorkout(workoutDao).execute(workoutId);
     }
 
-    public void addExercise(Exercise exercise) {
+    public void addExercise(Exercise exercise,Application application) {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Exercises").child(exercise.getId());
         databaseReference.setValue(exercise);
+        exerciseDao = Db.getInstance(application).exerciseDao();
+        new MenuRepository.InsertExercise(exerciseDao).execute(exercise);
     }
 
 
-    private void setExerciseList(String id) {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Exercises");
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ArrayList<Exercise> exercises = new ArrayList<>();
-                for(DataSnapshot dataSnapshot: snapshot.getChildren()){
-                    Exercise exercise = dataSnapshot.getValue(Exercise.class);
-                    if(exercise.getWorkoutId().equals(id)){
-                        exercises.add(exercise);
-                    }
-                }
-                exerciseList.postValue(exercises);
-                exerciseList.setValue(exercises);
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
 }

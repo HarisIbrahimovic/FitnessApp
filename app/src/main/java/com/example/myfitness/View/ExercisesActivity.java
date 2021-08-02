@@ -70,7 +70,7 @@ public class ExercisesActivity extends AppCompatActivity implements ExerciseAdap
     private void setUpView() {
         getWindow().setNavigationBarColor(getResources().getColor(R.color.myPurple));
         viewModel = ViewModelProviders.of(this).get(ExerciseViewModel.class);
-        viewModel.init(getIntent().getStringExtra("workoutId"));
+        viewModel.init(getIntent().getStringExtra("workoutId"),getApplication());
         deleteButton= findViewById(R.id.deleteWorkoutFB);
         addExerciseButton = findViewById(R.id.addExs);
         recyclerView = findViewById(R.id.recylclerViewEx);
@@ -89,7 +89,7 @@ public class ExercisesActivity extends AppCompatActivity implements ExerciseAdap
             onClicksUpdate();
         });
         deleteButton.setOnClickListener(v-> {
-            viewModel.deleteWorkout(getIntent().getStringExtra("workoutId"));
+            viewModel.deleteWorkout(getIntent().getStringExtra("workoutId"),getApplication());
             Toast.makeText(getApplicationContext(), "Workout removed", Toast.LENGTH_SHORT).show();
             finish();
         });
@@ -121,7 +121,7 @@ public class ExercisesActivity extends AppCompatActivity implements ExerciseAdap
         button.setOnClickListener(v -> {
             String workoutId = getIntent().getStringExtra("workoutId");
             viewModel.addExercise(exId,workoutId,exName.getText().toString(),setsValue.getText().toString(),repsValue.getText().toString()
-                    ,weightValue.getText().toString(),restValue.getText().toString(),button.getText().toString());
+                    ,weightValue.getText().toString(),restValue.getText().toString(),button.getText().toString(),getApplication());
         });
     }
 
@@ -169,6 +169,6 @@ public class ExercisesActivity extends AppCompatActivity implements ExerciseAdap
     public void deleteNode(int position) {
         Exercise exercise = exerciseList.get(position);
         Toast.makeText(getApplicationContext(),"Exercise removed",Toast.LENGTH_SHORT).show();
-        viewModel.deleteExercise(exercise.getId());
+        viewModel.deleteExercise(exercise.getId(),getApplication());
     }
 }

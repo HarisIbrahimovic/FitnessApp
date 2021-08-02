@@ -126,7 +126,7 @@ public class NewWorkoutActivity extends AppCompatActivity {
         String rest = restValue.getText().toString().trim();
         String weight = weightValue.getText().toString().trim();
         String buttonState = createWorkout.getText().toString().trim();
-        viewModel.createWorkout(wName,eName,reps,sets,rest,weight,buttonState);
+        viewModel.createWorkout(wName,eName,reps,sets,rest,weight,buttonState,getApplication());
     }
 
     private void updateValueW(TextView textView, int i) {
@@ -177,6 +177,5 @@ public class NewWorkoutActivity extends AppCompatActivity {
         createWorkout = findViewById(R.id.createWorkoutButton);
         viewModel = ViewModelProviders.of(this).get(NewWorkoutViewModel.class);
         viewModel.init();
-
     }
 }
